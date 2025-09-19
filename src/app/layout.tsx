@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Bricolage_Grotesque, DM_Sans } from 'next/font/google'
+import { Header } from '@/components/Header'
 import '@/styles/globals.css'
 
 const fontBricolageGrotesque = Bricolage_Grotesque({
@@ -25,10 +26,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='en'>
+    <html lang='en' className='dark'>
       <body
-        className={`${fontBricolageGrotesque.variable} ${fontDMSans.variable} antialiased`}
+        className={`text-lg antialiased bg-[#010326] ${fontBricolageGrotesque.variable} ${fontDMSans.variable}`}
       >
+        <Header />
         {children}
       </body>
     </html>
