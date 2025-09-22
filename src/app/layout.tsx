@@ -5,13 +5,13 @@ import '@/styles/globals.css'
 
 const fontBricolageGrotesque = Bricolage_Grotesque({
   variable: '--font-bricolage-grotesque',
-  subsets: ['latin', 'latin-ext'],
+  subsets: ['latin'],
   weight: ['800'],
 })
 
 const fontDMSans = DM_Sans({
   variable: '--font-dm-sans',
-  subsets: ['latin', 'latin-ext'],
+  subsets: ['latin'],
 })
 
 export const metadata: Metadata = {
@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang='en' className='dark'>
       <body
-        className={`text-lg antialiased bg-[#010326] ${fontBricolageGrotesque.variable} ${fontDMSans.variable}`}
+        className={`space-y-8 text-lg antialiased bg-[#010326] ${fontBricolageGrotesque.variable} ${fontDMSans.variable}`}
       >
         <Header />
         {children}
