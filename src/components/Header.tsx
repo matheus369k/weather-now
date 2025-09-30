@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import logo from '@/assets/svg/logo.svg'
+import logo from '@/assets/logo.svg'
 import { UnitsFilter } from './UnitsFilter'
 import Link from 'next/link'
 
