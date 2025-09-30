@@ -1,8 +1,6 @@
 'use client'
 
 import { getCurrentLocation } from '@/services/get-current-location'
-import { browserLocalStorage } from '@/util/browserStorage'
-import { BROWSER_STORAGE_KEYS } from '@/util/consts'
 import { createContext, useEffect, useReducer, type ReactNode } from 'react'
 
 type CoordinateType = {
@@ -52,17 +50,6 @@ function reducer(
   }
 }
 
-function initialReducer(state: ReducerStateLocationType) {
-  const user_location = browserLocalStorage.get(
-    BROWSER_STORAGE_KEYS.user_location
-  )
-  if (user_location) {
-    return JSON.parse(user_location)
-  }
-
-  return state
-}
-
 export const CoordinateLocationContext = createContext(
   {} as CoordinateLocationContextType
 )
@@ -72,39 +59,34 @@ export function CoordinateLocationProvider({
 }: {
   children: ReactNode
 }) {
-  const [state, dispatch] = useReducer(
-    reducer,
-    {
-      location_name: 'Berlin/Germany',
-      lat: 52.52,
-      log: 13.41,
-    },
-    initialReducer
-  )
+  const [state, dispatch] = useReducer(reducer, {
+    location_name: 'Berlin/Germany',
+    lat: 52.52,
+    log: 13.41,
+  })
 
   useEffect(() => {
-    const userLocationNotExist = !browserLocalStorage.get(
-      BROWSER_STORAGE_KEYS.user_location
-    )
-    if (userLocationNotExist) {
-      getCurrentLocation().then((response) => {
-        if (!response) return
-        const user_location = {
-          location_name: response.location_name,
-          lat: response.lat,
-          log: response.log,
-        }
+    if (globalThis.window) {
+      const navigator = window.navigator
 
-        browserLocalStorage.set({
-          key: BROWSER_STORAGE_KEYS.user_location,
-          value: JSON.stringify(user_location),
-        })
+      if ('geolocation' in navigator) {
+        navigator.geolocation.getCurrentPosition(async ({ coords }) => {
+          const result = await getCurrentLocation({
+            lat: coords.latitude,
+            log: coords.longitude,
+          })
 
-        dispatch({
-          type: REDUCER_ACTIONS.UPDATE_LOCATION,
-          payload: user_location,
+          if (!result) throw new Error('Not found your location')
+          dispatch({
+            type: REDUCER_ACTIONS.UPDATE_LOCATION,
+            payload: {
+              location_name: result.location_name,
+              lat: result.lat,
+              log: result.log,
+            },
+          })
         })
-      })
+      }
     }
   }, [])
 

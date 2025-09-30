@@ -12,11 +12,11 @@ export function WeatherHourlyLoader() {
 
       <ScrollArea className='flex flex-col w-full px-6 max-h-[378px] md:max-h-[678px]'>
         <div className='flex flex-col gap-4 '>
-          {Array.from({ length: 12 }).map(() => {
+          {Array.from({ length: 12 }).map((_, index) => {
             return (
               <Skeleton
                 className='size-full min-h-20 center row-span-1 bg-[#2628401e] rounded-lg p-2'
-                key={new Date().toISOString()}
+                key={new Date().setDate(index).toString()}
               />
             )
           })}

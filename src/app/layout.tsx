@@ -17,8 +17,9 @@ const fontDMSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'Weather App',
-  description: 'Weather app',
+  title: 'Weather Now',
+  description:
+    'Weather Now é o seu destino rápido para verificar as condições do tempo e previsões na sua cidade ou em qualquer local que você escolher',
   icons: 'favicon-32x32.png',
 }
 
