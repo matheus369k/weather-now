@@ -2,10 +2,12 @@ import type { Metadata } from 'next'
 import { Bricolage_Grotesque, DM_Sans } from 'next/font/google'
 import { Header } from '@/components/Header'
 import '@/styles/globals.css'
+import { MetricPrettierTypeProvider } from '@/contexts/MetricPrettiers'
+import { ClientQueryProvider } from '@/components/QueryClientProvider'
 
 const fontBricolageGrotesque = Bricolage_Grotesque({
   variable: '--font-bricolage-grotesque',
-  subsets: ['latin'],
+  subsets: ['vietnamese'],
   weight: ['800'],
 })
 
@@ -28,10 +30,14 @@ export default function RootLayout({
   return (
     <html lang='en' className='dark'>
       <body
-        className={`space-y-8 text-lg antialiased bg-[#010326] ${fontBricolageGrotesque.variable} ${fontDMSans.variable}`}
+        className={`space-y-8 text-lg antialiased bg-[#010326] ${fontBricolageGrotesque.className} ${fontDMSans.className}`}
       >
-        <Header />
-        {children}
+        <ClientQueryProvider>
+          <MetricPrettierTypeProvider>
+            <Header />
+            {children}
+          </MetricPrettierTypeProvider>
+        </ClientQueryProvider>
       </body>
     </html>
   )

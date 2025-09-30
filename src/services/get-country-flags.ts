@@ -21,7 +21,6 @@ export async function getCountryFlag(name: string) {
       env.NEXT_PUBLIC_COUNTRY_FLAGS_API_URL.concat(fetchParams)
     )
     const [results]: ResponseSearchResultsType = await response.json()
-    console.log(results)
 
     if (!results.flags) {
       throw new Error('Not found flags')

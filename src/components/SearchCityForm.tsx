@@ -133,9 +133,17 @@ export function SearchCityForm() {
     })
   }
 
-  function requestWeatherOfPlace({ lat, log }: { lat: number; log: number }) {
+  function requestWeatherOfPlace({
+    lat,
+    log,
+    location_name,
+  }: {
+    lat: number
+    log: number
+    location_name: string
+  }) {
     dispatch({ type: REDUCER_ACTIONS.TOGGLE_DROPDOWN })
-    updateCoordinateLocation({ lat, log })
+    updateCoordinateLocation({ lat, log, location_name })
   }
 
   function toggleLocationDropdown() {
@@ -151,7 +159,7 @@ export function SearchCityForm() {
     >
       <div
         data-loading={state.is_loading}
-        className='flex rounded relative w-full placeholder-shown:text-neutral-500 data-[loading=true]:text-neutral-500'
+        className='flex rounded-md relative w-full placeholder-shown:text-neutral-500 data-[loading=true]:text-neutral-500 overflow-hidden'
       >
         <Label
           htmlFor='search'
@@ -204,6 +212,7 @@ export function SearchCityForm() {
                   requestWeatherOfPlace({
                     lat: location.latitude,
                     log: location.longitude,
+                    location_name: `${location.country}/${location.name}`,
                   })
                 }
                 className='relative w-full flex items-center gap-2 text-sm p-4 px-2 cursor-pointer rounded-md overflow-hidden last-of-type:after:border-b-0 after:absolute after:bottom-0 after:border-neutral-500 after:border-b after:w-full hover:bg-[#2F2F49]'
@@ -226,9 +235,9 @@ export function SearchCityForm() {
       <div
         data-loading={state.is_loading}
         aria-label='search list'
-        className='absolute top-16 rounded-md left-0 z-20 bg-[#262840] p-2 w-full opacity-0 transition-all duration-300 -translate-y-5 overflow-hidden data-[loading=false]:-z-10 data-[loading=true]:opacity-100 data-[loading=true]:translate-y-0'
+        className='absolute top-16 rounded-xl left-0 z-20 bg-[#262840] p-2 w-full opacity-0 transition-all duration-300 -translate-y-5 overflow-hidden data-[loading=false]:-z-10 data-[loading=true]:opacity-100 data-[loading=true]:translate-y-0'
       >
-        <div className='relative w-full flex items-center gap-2 text-sm p-3 px-2 cursor-pointer rounded-md overflow-hidden hover:bg-[#2F2F49]'>
+        <div className='relative w-full flex items-center gap-2 text-sm p-3 px-2 cursor-pointer rounded-md overflow-hidden'>
           <Loader className='size-6' />
           <span>Search in progress</span>
         </div>
@@ -238,7 +247,7 @@ export function SearchCityForm() {
         type='submit'
         disabled={state.is_loading}
         aria-label='submit-search-form'
-        className='w-full bg-blue-500 text-neutral-50 text-xl p-7 px-12 border-none hover:bg-blue-700 disabled:bg-blue-700 sm:w-fit'
+        className='w-full rounded-md  bg-blue-500 text-neutral-50 text-xl p-7 px-12 border-none hover:bg-blue-700 disabled:bg-blue-700 sm:w-fit'
       >
         Search
       </Button>

@@ -36,7 +36,6 @@ export async function getGeolocation(search: string) {
       env.NEXT_PUBLIC_GEOLOCATION_API_URL.concat(fetchParams)
     )
     const { results }: ResponseSearchResultsType = await response.json()
-    console.log(results)
 
     if (!results) {
       throw new Error('Not found location')
