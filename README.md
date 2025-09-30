@@ -14,7 +14,7 @@
 
 ## Descrição
 
-A aplicação e um site que, monstra as variações do clima. Há varias funcionalidades:
+Weather Now é o seu destino rápido para verificar as condições do tempo e previsões na sua cidade ou em qualquer local que você escolher.A aplicação e um site que, monstra as variações do clima e suas principais funcionalidades são:
 
 - Diferentes formato dos dados, os padrões metric e imperil.
 - Buscador, encontre uma cidade e veja sé o clima estar favorável.
