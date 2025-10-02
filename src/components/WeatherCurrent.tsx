@@ -18,7 +18,7 @@ export function WeatherCurrent() {
   const {
     coordinate: { lat, log, location_name },
   } = useContext(CoordinateLocationContext)
-  const { data } = useQuery({
+  const { data, isFetching, isError } = useQuery({
     queryKey: [lat, log, precipitation, temperature, wind_speed],
     staleTime: 1000 * 60 * 60 * 24,
     queryFn: async () =>
@@ -46,7 +46,10 @@ export function WeatherCurrent() {
     },
   })
 
-  if (!data) return <WeatherCurrentLoader />
+  if (isFetching) return <WeatherCurrentLoader />
+  if (!data || isError) {
+    throw new Error('error to try access current weather api')
+  }
 
   return (
     <div className='grid grid-rows-1 gap-6 size-full md:grid-rows-3 xl:grid-rows-7 xl:row-span-5 xl:col-span-5'>

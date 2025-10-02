@@ -3,7 +3,7 @@
 import { useContext, useReducer, useRef, useState, type FormEvent } from 'react'
 import { Button } from './ui/button'
 import { Label } from './ui/label'
-import { ChevronDown, ChevronUp, Loader, Search } from 'lucide-react'
+import { ChevronDown, ChevronUp, Loader, Search, X } from 'lucide-react'
 import { Input } from './ui/input'
 import { getGeolocation, type PlaceType } from '@/services/get-geolocation'
 import {
@@ -28,7 +28,7 @@ const REDUCER_ACTIONS = {
   START_LOADING: 'start/loading',
   UPDATE_LOCATION: 'update/location',
   RESET_LOCATION: 'reset/location',
-  START_ERROR: 'start/error',
+  UPDATE_ERROR: 'update/error',
   TOGGLE_DROPDOWN: 'toggle/dropdown',
 }
 
@@ -45,11 +45,11 @@ function reducer(
         is_open: false,
       }
 
-    case REDUCER_ACTIONS.START_ERROR:
+    case REDUCER_ACTIONS.UPDATE_ERROR:
       return {
         locations: null,
         is_loading: false,
-        is_error: true,
+        is_error: !state.is_error,
         is_open: false,
       }
 
@@ -101,7 +101,12 @@ export function SearchCityForm() {
 
     const results = await getGeolocation(search)
     if (!results) {
-      dispatch({ type: REDUCER_ACTIONS.START_ERROR })
+      dispatch({ type: REDUCER_ACTIONS.UPDATE_ERROR })
+      setTimeout(() => {
+        if (state.is_error) {
+          dispatch({ type: REDUCER_ACTIONS.UPDATE_ERROR })
+        }
+      }, 4000)
       return
     }
 
@@ -155,16 +160,15 @@ export function SearchCityForm() {
       ref={formRef}
       onSubmit={requestFindCityLocation}
       aria-label='search-form'
-      className='flex flex-col gap-4 relative w-full max-w-2xl mx-auto sm:flex-row'
+      className='flex flex-col items-center gap-5 relative w-full max-w-2xl mx-auto sm:flex-row'
     >
       <div
         data-loading={state.is_loading}
-        className='flex rounded-md relative w-full placeholder-shown:text-neutral-500 data-[loading=true]:text-neutral-500 overflow-hidden'
+        className='flex rounded-md relative w-full overflow-hidden border-3 border-transparent ring ring-transparent focus-within:ring-neutral-100 placeholder-shown:text-neutral-500 data-[loading=true]:text-neutral-500'
       >
         <Label
           htmlFor='search'
-          data-error={state.is_error}
-          className='absolute left-4 top-1/2 -translate-y-1/2 data-[error=true]:text-red-600'
+          className='absolute left-4 top-1/2 -translate-y-1/2'
         >
           <Search className='size-6' />
         </Label>
@@ -177,10 +181,9 @@ export function SearchCityForm() {
           autoSave='off'
           required={true}
           minLength={3}
-          data-error={state.is_error}
           readOnly={state.is_loading}
           placeholder='Search for a place, e.g., New York'
-          className='dark:bg-[#262840] h-full text-lg p-4 px-4 border-transparent truncate pl-14 data-[error=true]:border-red-600 md:text-lg'
+          className='dark:bg-[#262840] h-full text-lg p-4 px-4 border-none truncate pl-14 md:text-lg'
         />
 
         <Button
@@ -201,7 +204,7 @@ export function SearchCityForm() {
       <ul
         data-dropdown={state.is_open}
         aria-label='search list'
-        className='absolute top-16 rounded-md left-0 z-50 bg-[#262840] p-2 w-full opacity-0 transition-all duration-300 -translate-y-5 overflow-hidden data-[dropdown=false]:-z-10 data-[dropdown=true]:opacity-100 data-[dropdown=true]:translate-y-0'
+        className='absolute top-20 rounded-md left-0 z-50 bg-[#262840] p-2 w-full opacity-0 transition-all duration-300 -translate-y-5 overflow-hidden data-[dropdown=false]:-z-10 data-[dropdown=true]:opacity-100 data-[dropdown=true]:translate-y-0'
       >
         {state.locations &&
           state.locations.map((location) => {
@@ -215,7 +218,7 @@ export function SearchCityForm() {
                     location_name: `${location.country}/${location.name}`,
                   })
                 }
-                className='relative w-full flex items-center gap-2 text-sm p-4 px-2 cursor-pointer rounded-md overflow-hidden last-of-type:after:border-b-0 after:absolute after:bottom-0 after:border-neutral-500 after:border-b after:w-full hover:bg-[#2F2F49]'
+                className='relative w-full flex items-center gap-2 text-sm p-3 px-2 cursor-pointer rounded-md overflow-hidden last-of-type:after:border-b-0 after:absolute after:bottom-0 after:border-neutral-500 after:border-b after:w-full hover:bg-[#2F2F49]'
               >
                 <Image
                   src={location.flags.png}
@@ -233,9 +236,20 @@ export function SearchCityForm() {
       </ul>
 
       <div
+        data-error={state.is_error}
+        aria-label='not found search list'
+        className='absolute top-20 rounded-md left-0 z-20 bg-[#262840] p-2 w-full opacity-0 transition-all duration-300 -translate-y-5 overflow-hidden data-[error=false]:-z-10 data-[error=true]:opacity-100 data-[error=true]:translate-y-0'
+      >
+        <div className='relative w-full flex items-center gap-2 text-sm p-3 px-2 cursor-pointer rounded-md overflow-hidden'>
+          <X className='size-6' />
+          Not search result found
+        </div>
+      </div>
+
+      <div
         data-loading={state.is_loading}
-        aria-label='search list'
-        className='absolute top-16 rounded-xl left-0 z-20 bg-[#262840] p-2 w-full opacity-0 transition-all duration-300 -translate-y-5 overflow-hidden data-[loading=false]:-z-10 data-[loading=true]:opacity-100 data-[loading=true]:translate-y-0'
+        aria-label='loading search list'
+        className='absolute top-20 rounded-md left-0 z-20 bg-[#262840] p-2 w-full opacity-0 transition-all duration-300 -translate-y-5 overflow-hidden data-[loading=false]:-z-10 data-[loading=true]:opacity-100 data-[loading=true]:translate-y-0'
       >
         <div className='relative w-full flex items-center gap-2 text-sm p-3 px-2 cursor-pointer rounded-md overflow-hidden'>
           <Loader className='size-6' />
@@ -247,7 +261,7 @@ export function SearchCityForm() {
         type='submit'
         disabled={state.is_loading}
         aria-label='submit-search-form'
-        className='w-full rounded-md  bg-blue-500 text-neutral-50 text-xl p-7 px-12 border-none hover:bg-blue-700 disabled:bg-blue-700 sm:w-fit'
+        className='w-full rounded-md bg-blue-500 text-neutral-50 text-xl p-6.5 px-8 border-3 border-transparent ring focus-visible:ring-1 ring-transparent focus-visible:border-[#010326] focus-visible:ring-blue-500 focus-visible:hover:ring-blue-700 focus-visible:disabled:ring-blue-700 hover:bg-blue-700 disabled:bg-blue-700 sm:w-fit'
       >
         Search
       </Button>

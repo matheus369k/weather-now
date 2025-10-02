@@ -17,7 +17,7 @@ export function WeatherDaily() {
   const {
     coordinate: { lat, log },
   } = useContext(CoordinateLocationContext)
-  const { data } = useQuery({
+  const { data, isFetching, isError } = useQuery({
     queryKey: [lat, log, temperature, 'daily-weather'],
     staleTime: 1000 * 60 * 60 * 24,
     queryFn: async () =>
@@ -45,7 +45,10 @@ export function WeatherDaily() {
     },
   })
 
-  if (!data) return <WeatherDailyLoader />
+  if (isFetching) return <WeatherDailyLoader />
+  if (!data || isError) {
+    throw new Error('error to try access daily weather api')
+  }
 
   return (
     <div className='size-full order-2 flex flex-col gap-6 xl:place-content-end xl:col-start-auto xl:row-span-3 xl:col-span-5'>

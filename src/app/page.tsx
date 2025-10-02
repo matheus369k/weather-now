@@ -3,9 +3,6 @@ import { CoordinateLocationProvider } from '@/contexts/CoordinateLocaton'
 import { WeatherCurrent } from '@/components/WeatherCurrent'
 import { WeatherDaily } from '@/components/WeatherDaily'
 import { WeatherHourly } from '@/components/WeatherHourly'
-import { Suspense } from 'react'
-import { Skeleton } from '@/components/ui/skeleton'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 export default function Home() {
   return (

@@ -31,7 +31,7 @@ export function WeatherHourly() {
   const {
     coordinate: { lat, log },
   } = useContext(CoordinateLocationContext)
-  const { data } = useQuery({
+  const { data, isFetching, isError } = useQuery({
     queryKey: [lat, log, weekDay, temperature, 'hourly-weather'],
     staleTime: 1000 * 60 * 60,
     queryFn: async () =>
@@ -64,7 +64,10 @@ export function WeatherHourly() {
     setWeekDay(date)
   }
 
-  if (!data) return <WeatherHourlyLoader />
+  if (isFetching) return <WeatherHourlyLoader />
+  if (!data || isError) {
+    throw new Error('error to try access hourly weather api')
+  }
 
   return (
     <div className='relative size-full order-3 rounded-3xl flex flex-col gap-6 py-6 bg-[#262840] xl:row-start-1 xl:col-start-6 xl:row-span-8 xl:col-span-2'>
@@ -76,7 +79,7 @@ export function WeatherHourly() {
             className='bg-[#3B3B5D] text-neutral-100 hover:bg-[#2F2F49]'
             asChild
           >
-            <Button className='border-none flex items-center'>
+            <Button className='flex items-center border-3 border-transparent ring ring-transparent focus-visible:ring-1 focus-visible:border-[#010326] focus-visible:ring-neutral-50'>
               {dayjs(weekDay).format('dddd')} <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -91,8 +94,9 @@ export function WeatherHourly() {
               return (
                 <DropdownMenuItem
                   key={dynamicDay.toISOString()}
-                  className='w-full py-3 focus:bg-transparent cursor-pointer hover:bg-[#262840] data-[active=true]:bg-[#2F2F49] font-medium'
+                  className='w-full py-3  cursor-pointer font-medium  focus:bg-transparent hover:bg-[#262840] data-[active=true]:bg-[#2F2F49]'
                   data-active={isActive}
+                  autoFocus={isActive}
                   onClick={() => toggleCurrentWeekDay(dynamicDay)}
                 >
                   {dayjs(dynamicDay).format('dddd')}
