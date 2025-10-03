@@ -29,7 +29,7 @@ export default function Error({
       </div>
       <Button
         onClick={reset}
-        className='bg-[#272441] text-neutral-100 hover:bg-[#2F2F49] border-none focus:border cursor-pointer'
+        className='bg-[#272441] text-neutral-100 hover:bg-[#2F2F49] border-none focus:outline-neutral-100 cursor-pointer focus-within:ring-neutral-50 focus-within:ring-1 hover:ring-transparent'
       >
         <RefreshCw /> Retry
       </Button>

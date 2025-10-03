@@ -103,10 +103,8 @@ export function SearchCityForm() {
     if (!results) {
       dispatch({ type: REDUCER_ACTIONS.UPDATE_ERROR })
       setTimeout(() => {
-        if (state.is_error) {
-          dispatch({ type: REDUCER_ACTIONS.UPDATE_ERROR })
-        }
-      }, 4000)
+        dispatch({ type: REDUCER_ACTIONS.UPDATE_ERROR })
+      }, 5000)
       return
     }
 
@@ -240,7 +238,7 @@ export function SearchCityForm() {
         aria-label='not found search list'
         className='absolute top-20 rounded-md left-0 z-20 bg-[#262840] p-2 w-full opacity-0 transition-all duration-300 -translate-y-5 overflow-hidden data-[error=false]:-z-10 data-[error=true]:opacity-100 data-[error=true]:translate-y-0'
       >
-        <div className='relative w-full flex items-center gap-2 text-sm p-3 px-2 cursor-pointer rounded-md overflow-hidden'>
+        <div className='relative w-full flex items-center gap-2 text-sm p-3 px-2 rounded-md overflow-hidden'>
           <X className='size-6' />
           Not search result found
         </div>
@@ -251,7 +249,7 @@ export function SearchCityForm() {
         aria-label='loading search list'
         className='absolute top-20 rounded-md left-0 z-20 bg-[#262840] p-2 w-full opacity-0 transition-all duration-300 -translate-y-5 overflow-hidden data-[loading=false]:-z-10 data-[loading=true]:opacity-100 data-[loading=true]:translate-y-0'
       >
-        <div className='relative w-full flex items-center gap-2 text-sm p-3 px-2 cursor-pointer rounded-md overflow-hidden'>
+        <div className='relative w-full flex items-center gap-2 text-sm p-3 px-2 rounded-md overflow-hidden'>
           <Loader className='size-6' />
           <span>Search in progress</span>
         </div>
