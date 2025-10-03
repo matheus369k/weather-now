@@ -41,14 +41,10 @@ pnpm
 Crie um arquivo **.env**, com as variares ambientes abaixo
 
 ```bash
-# GeoLocation APIs
+# GeoLocation APIs# GeoLocation APIs
 NEXT_PUBLIC_GEOLOCATION_API_URL=https://geocoding-api.open-meteo.com/v1/search
 NEXT_PUBLIC_COUNTRY_FLAGS_API_URL=https://restcountries.com/v3.1/name
-NEXT_PUBLIC_IP6_API_URL=https://api64.ipify.org/?format=json
-
-## For get apiKey access site:https://getgeoapi.com
-NEXT_PUBLIC_CURRENT_LOCATION_API_URL=https://api.getgeoapi.com/v2/ip/
-NEXT_PUBLIC_CURRENT_LOCATION_API_KEY=api_key
+NEXT_PUBLIC_CURRENT_LOCATION_API_URL=https://api-bdc.io/data/reverse-geocode-client
 
 # Weather API
 NEXT_PUBLIC_WEATHER_API_URL=https://api.open-meteo.com/v1/forecast
