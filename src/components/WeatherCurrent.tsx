@@ -53,7 +53,7 @@ export function WeatherCurrent() {
 
   return (
     <div className='grid grid-rows-1 gap-6 size-full md:grid-rows-3 xl:grid-rows-7 xl:row-span-5 xl:col-span-5'>
-      <div className='row-span-2 col-span-4 bg-[url(@/assets/bg-today-small.svg)] bg-no-repeat bg-cover bg-center rounded-3xl overflow-hidden flex justify-center items-center flex-col gap-4 px-4 pt-6 pb-10 border border-neutral-700 md:bg-[url(@/assets/bg-today-large.svg)] md:justify-between md:flex-row xl:row-span-5'>
+      <div className='row-span-2 col-span-4 bg-[url(../assets/bg-today-small.svg)] bg-no-repeat bg-cover bg-center rounded-3xl overflow-hidden flex justify-center items-center flex-col gap-4 px-4 pt-6 pb-10 border border-neutral-700 md:bg-[url(../assets/bg-today-large.svg)] md:justify-between md:flex-row xl:row-span-5'>
         <div className='flex flex-col gap-2 text-center md:text-start'>
           <h2 className='text-4xl font-bold'>
             {location_name.replace('/', ', ')}
