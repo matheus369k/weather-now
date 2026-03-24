@@ -4,6 +4,8 @@ import { Header } from '@/components/Header'
 import '@/styles/globals.css'
 import { MetricPrettierTypeProvider } from '@/contexts/MetricPrettiers'
 import { ClientQueryProvider } from '@/components/QueryClientProvider'
+import { GoogleAnalytics } from '@next/third-parties/google';
+import { env } from '@/util/env';
 
 const fontBricolageGrotesque = Bricolage_Grotesque({
   variable: '--font-bricolage-grotesque',
@@ -39,6 +41,7 @@ export default function RootLayout({
             {children}
           </MetricPrettierTypeProvider>
         </ClientQueryProvider>
+				<GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_ID} />
       </body>
     </html>
   )
