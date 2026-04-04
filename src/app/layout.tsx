@@ -1,15 +1,15 @@
+import { GoogleAnalytics } from '@next/third-parties/google';
+import { env } from '@/util/env';
+import '@/styles/globals.css'
 import type { Metadata } from 'next'
 import { Bricolage_Grotesque, DM_Sans } from 'next/font/google'
 import { Header } from '@/components/Header'
-import '@/styles/globals.css'
-import { MetricPrettierTypeProvider } from '@/contexts/MetricPrettiers'
 import { ClientQueryProvider } from '@/components/QueryClientProvider'
-import { GoogleAnalytics } from '@next/third-parties/google';
-import { env } from '@/util/env';
+import { MetricPrettierTypeProvider } from '@/contexts/MetricPrettiers'
 
 const fontBricolageGrotesque = Bricolage_Grotesque({
   variable: '--font-bricolage-grotesque',
-  subsets: ['vietnamese'],
+  subsets: ['latin'],
   weight: ['800'],
 })
 
