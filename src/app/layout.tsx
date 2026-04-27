@@ -1,8 +1,7 @@
-import { GoogleAnalytics } from '@next/third-parties/google';
-import { env } from '@/util/env';
-import '@/styles/globals.css'
 import type { Metadata } from 'next'
 import { Bricolage_Grotesque, DM_Sans } from 'next/font/google'
+import '@/styles/globals.css'
+import { GoogleAnalyticsMonitor } from '@/components/GoogleAnalytics'
 import { Header } from '@/components/Header'
 import { ClientQueryProvider } from '@/components/QueryClientProvider'
 import { MetricPrettierTypeProvider } from '@/contexts/MetricPrettiers'
@@ -41,7 +40,8 @@ export default function RootLayout({
             {children}
           </MetricPrettierTypeProvider>
         </ClientQueryProvider>
-				<GoogleAnalytics gaId={env.NEXT_PUBLIC_GA_ID} />
+
+        <GoogleAnalyticsMonitor />
       </body>
     </html>
   )

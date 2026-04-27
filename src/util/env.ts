@@ -3,12 +3,14 @@ import { z } from 'zod'
 
 dotenv.config()
 
+const googleAnalystRegex = /^G-[A-Z0-9]{10}$/
+
 const envSchema = z.object({
   NEXT_PUBLIC_GEOLOCATION_API_URL: z.string().url(),
   NEXT_PUBLIC_WEATHER_API_URL: z.string().url(),
   NEXT_PUBLIC_COUNTRY_FLAGS_API_URL: z.string().url(),
   NEXT_PUBLIC_CURRENT_LOCATION_API_URL: z.string().url(),
-  NEXT_PUBLIC_GA_ID: z.string(),
+  NEXT_PUBLIC_GA_ID: z.string().regex(googleAnalystRegex).optional(),
 })
 
 export const env = envSchema.parse(process.env)
