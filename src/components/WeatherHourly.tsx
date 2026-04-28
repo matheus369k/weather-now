@@ -23,7 +23,7 @@ export function WeatherHourly() {
   const { coordinate } = useContext(CoordinateLocationContext)
   const { data, isFetching, isError } = useGetHourlyWeather({
     temperature: metricPrettier.temperature,
-    custom_date: weekDay,
+    custom_date: weekDay.toString(),
     lat: coordinate.lat,
     log: coordinate.log,
   })

@@ -29,7 +29,7 @@ interface WeatherHourlyResponse {
 
 export type GetHourlyWeatherProps = {
   temperature: 'celsius' | 'fahrenheit'
-  custom_date: dayjs.Dayjs
+  custom_date: string
   log: number
   lat: number
 }
