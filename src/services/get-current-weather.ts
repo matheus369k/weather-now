@@ -13,7 +13,7 @@ type CurrentUnits = {
   apparent_temperature: string
 }
 
-type Current = {
+export type Current = {
   time: string
   interval: number
   wind_speed_10m: number
@@ -36,7 +36,7 @@ type WeatherData = {
   current: Current
 }
 
-type GetCurrentWeatherProps = {
+export type GetCurrentWeatherProps = {
   temperature: 'celsius' | 'fahrenheit'
   wind_speed: 'kmh' | 'mph'
   precipitation: 'mm' | 'inch'
@@ -53,7 +53,7 @@ export async function getCurrentWeather(props: GetCurrentWeatherProps) {
     const response = await fetch(
       env.NEXT_PUBLIC_WEATHER_API_URL.concat(baseQueryParams)
         .concat(metricQueryParams)
-        .concat(currentQueryParams)
+        .concat(currentQueryParams),
     )
     const result: WeatherData = await response.json()
 
