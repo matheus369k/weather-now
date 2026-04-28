@@ -2,62 +2,30 @@
 
 import { CoordinateLocationContext } from '@/contexts/CoordinateLocaton'
 import { MetricPrettierContext } from '@/contexts/MetricPrettiers'
-import { getHourlyWeather } from '@/services/get-hourly-weather'
-import { WEATHER_ICONS } from '@/util/consts'
-import { useQuery } from '@tanstack/react-query'
-import { Skeleton } from '@/components/ui/skeleton'
 import dayjs from 'dayjs'
 import Image from 'next/image'
 import { useContext, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 import { Button } from './ui/button'
 import { ChevronDown } from 'lucide-react'
 import { WeatherHourlyLoader } from './WeatherHourlyLoader'
+import { useGetHourlyWeather } from '@/services/use-get-hourly-weather'
 
 export function WeatherHourly() {
   const [weekDay, setWeekDay] = useState(dayjs(new Date()))
-  const {
-    metricPrettier: { temperature },
-  } = useContext(MetricPrettierContext)
-  const {
-    coordinate: { lat, log },
-  } = useContext(CoordinateLocationContext)
-  const { data, isFetching, isError } = useQuery({
-    queryKey: [lat, log, weekDay, temperature, 'hourly-weather'],
-    staleTime: 1000 * 60 * 60,
-    queryFn: async () =>
-      await getHourlyWeather({
-        lat,
-        log,
-        custom_date: weekDay,
-        temperature,
-      }),
-    select(data) {
-      if (!data) return
-      let weather_icons = Array.from({ length: 12 }).map(() => WEATHER_ICONS[0])
-
-      Object.entries(WEATHER_ICONS).forEach((entries) => {
-        data.weather_code.map((weatherCode, index) => {
-          if (entries[0] === weatherCode.toString()) {
-            weather_icons.splice(index, 1, entries[1])
-          }
-        })
-      })
-
-      return {
-        ...data,
-        weather_icons,
-      }
-    },
+  const { metricPrettier } = useContext(MetricPrettierContext)
+  const { coordinate } = useContext(CoordinateLocationContext)
+  const { data, isFetching, isError } = useGetHourlyWeather({
+    temperature: metricPrettier.temperature,
+    custom_date: weekDay,
+    lat: coordinate.lat,
+    log: coordinate.log,
   })
 
   function toggleCurrentWeekDay(date: dayjs.Dayjs) {
@@ -75,11 +43,8 @@ export function WeatherHourly() {
         <h3 className='text-2xl truncate w-full'>Hourly forecast</h3>
 
         <DropdownMenu modal={false}>
-          <DropdownMenuTrigger
-            className='bg-[#3B3B5D] text-neutral-100 hover:bg-[#2F2F49]'
-            asChild
-          >
-            <Button className='flex items-center border-3 border-transparent ring ring-transparent focus-visible:ring-1 focus-visible:border-[#010326] focus-visible:ring-neutral-50'>
+          <DropdownMenuTrigger>
+            <Button className='flex items-center border-3 border-transparent ring ring-transparent focus-visible:ring-1 focus-visible:border-[#010326] focus-visible:ring-neutral-50 bg-[#3B3B5D] text-neutral-100 hover:bg-[#2F2F49]'>
               {dayjs(weekDay).format('dddd')} <ChevronDown />
             </Button>
           </DropdownMenuTrigger>
@@ -90,7 +55,6 @@ export function WeatherHourly() {
             {Array.from({ length: 7 }).map((_, index) => {
               const dynamicDay = dayjs(new Date()).set('day', index)
               const isActive = dayjs(weekDay).isSame(dynamicDay, 'day')
-              console.log(isActive, dynamicDay, weekDay)
               return (
                 <DropdownMenuItem
                   key={dynamicDay.toISOString()}

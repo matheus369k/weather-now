@@ -9,7 +9,7 @@ interface HourlyUnits {
   temperature_2m: string
 }
 
-interface HourlyData {
+export interface HourlyData {
   time: string[]
   weather_code: number[]
   temperature_2m: number[]
@@ -27,7 +27,7 @@ interface WeatherHourlyResponse {
   hourly: HourlyData
 }
 
-type GetHourlyWeatherProps = {
+export type GetHourlyWeatherProps = {
   temperature: 'celsius' | 'fahrenheit'
   custom_date: dayjs.Dayjs
   log: number
@@ -51,7 +51,7 @@ export async function getHourlyWeather(props: GetHourlyWeatherProps) {
     const response = await fetch(
       env.NEXT_PUBLIC_WEATHER_API_URL.concat(baseQueryParams)
         .concat(metricQueryParams)
-        .concat(hourlyQueryParams)
+        .concat(hourlyQueryParams),
     )
     const result: WeatherHourlyResponse = await response.json()
 
