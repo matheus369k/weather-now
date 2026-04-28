@@ -19,11 +19,8 @@ export function UnitsFilter() {
 
   return (
     <DropdownMenu modal={false}>
-      <DropdownMenuTrigger
-        className='bg-[#272441] text-neutral-100 hover:bg-[#2F2F49]'
-        asChild
-      >
-        <Button className='border-3 border-transparent ring ring-transparent focus-visible:ring-1 focus-visible:border-[#010326] focus-visible:ring-neutral-50'>
+      <DropdownMenuTrigger>
+        <Button className='border-3 border-transparent ring ring-transparent focus-visible:ring-1 focus-visible:border-[#010326] focus-visible:ring-neutral-50 bg-[#272441] text-neutral-100 hover:bg-[#2F2F49]'>
           <Settings /> Units <ChevronDown />
         </Button>
       </DropdownMenuTrigger>
