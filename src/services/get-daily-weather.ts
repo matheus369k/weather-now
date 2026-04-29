@@ -9,7 +9,7 @@ interface DailyUnits {
   temperature_2m_min: string
 }
 
-interface DailyData {
+export interface DailyData {
   time: string[]
   weather_code: number[]
   temperature_2m_max: number[]
@@ -28,7 +28,7 @@ interface WeatherResponse {
   daily: DailyData
 }
 
-type GetDailyWeatherProps = {
+export type GetDailyWeatherProps = {
   temperature: 'celsius' | 'fahrenheit'
   log: number
   lat: number
@@ -43,7 +43,7 @@ export async function getDailyWeather(props: GetDailyWeatherProps) {
     const response = await fetch(
       env.NEXT_PUBLIC_WEATHER_API_URL.concat(baseQueryParams)
         .concat(metricQueryParams)
-        .concat(dailyQueryParams)
+        .concat(dailyQueryParams),
     )
     const result: WeatherResponse = await response.json()
 

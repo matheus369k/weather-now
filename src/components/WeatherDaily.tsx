@@ -2,47 +2,19 @@
 
 import { CoordinateLocationContext } from '@/contexts/CoordinateLocaton'
 import { MetricPrettierContext } from '@/contexts/MetricPrettiers'
-import { getDailyWeather } from '@/services/get-daily-weather'
-import { WEATHER_ICONS } from '@/util/consts'
-import { useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import Image from 'next/image'
 import { useContext } from 'react'
 import { WeatherDailyLoader } from './WeatherDailyLoader'
+import { useGetDailyWeather } from '@/services/use-get-daily-weather'
 
 export function WeatherDaily() {
-  const {
-    metricPrettier: { temperature },
-  } = useContext(MetricPrettierContext)
-  const {
-    coordinate: { lat, log },
-  } = useContext(CoordinateLocationContext)
-  const { data, isFetching, isError } = useQuery({
-    queryKey: [lat, log, temperature, 'daily-weather'],
-    staleTime: 1000 * 60 * 60 * 24,
-    queryFn: async () =>
-      await getDailyWeather({
-        lat,
-        log,
-        temperature,
-      }),
-    select(data) {
-      if (!data) return
-      let weather_icons = Array.from({ length: 7 }).map(() => WEATHER_ICONS[0])
-
-      Object.entries(WEATHER_ICONS).forEach((entries) => {
-        data.weather_code.map((weatherCode, index) => {
-          if (entries[0] === weatherCode.toString()) {
-            weather_icons.splice(index, 1, entries[1])
-          }
-        })
-      })
-
-      return {
-        ...data,
-        weather_icons,
-      }
-    },
+  const { metricPrettier } = useContext(MetricPrettierContext)
+  const { coordinate } = useContext(CoordinateLocationContext)
+  const { data, isFetching, isError } = useGetDailyWeather({
+    temperature: metricPrettier.temperature,
+    lat: coordinate.lat,
+    log: coordinate.log,
   })
 
   if (isFetching) return <WeatherDailyLoader />
