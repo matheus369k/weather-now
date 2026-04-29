@@ -43,10 +43,8 @@ export function WeatherHourly() {
         <h3 className='text-2xl truncate w-full'>Hourly forecast</h3>
 
         <DropdownMenu modal={false}>
-          <DropdownMenuTrigger>
-            <Button className='flex items-center border-3 border-transparent ring ring-transparent focus-visible:ring-1 focus-visible:border-[#010326] focus-visible:ring-neutral-50 bg-[#3B3B5D] text-neutral-100 hover:bg-[#2F2F49]'>
-              {dayjs(weekDay).format('dddd')} <ChevronDown />
-            </Button>
+          <DropdownMenuTrigger className='flex items-center border-3 border-transparent ring ring-transparent focus-visible:ring-1 focus-visible:border-[#010326] focus-visible:ring-neutral-50 bg-[#3B3B5D] text-neutral-100 hover:bg-[#2F2F49]'>
+            {dayjs(weekDay).format('dddd')} <ChevronDown />
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align='end'
