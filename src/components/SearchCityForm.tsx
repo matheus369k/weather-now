@@ -1,88 +1,31 @@
+/** biome-ignore-all lint/a11y/useKeyWithClickEvents: this click have make with mouse not anything key */
 'use client'
 
-import { useContext, useReducer, useRef, useState, type FormEvent } from 'react'
-import { Button } from './ui/button'
-import { Label } from './ui/label'
 import { ChevronDown, ChevronUp, Loader, Search, X } from 'lucide-react'
-import { Input } from './ui/input'
-import { getGeolocation, type PlaceType } from '@/services/get-geolocation'
-import {
-  getCountryFlag,
-  type CountryFlagsType,
-} from '@/services/get-country-flags'
 import Image from 'next/image'
+import { type FormEvent, useContext, useReducer, useRef } from 'react'
 import { CoordinateLocationContext } from '@/contexts/CoordinateLocaton'
+import { getCountryFlag } from '@/services/get-country-flags'
+import { getGeolocation } from '@/services/get-geolocation'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { Label } from './ui/label'
+import {
+  SEARCH_CITY_REDUCER_ACTIONS,
+  searchCityReducer,
+  type LocationList,
+} from '@/reducers/search-city/reducer'
 
-interface LocationList extends PlaceType {
-  flags: CountryFlagsType
-}
-
-interface ReducerStateType {
-  locations: LocationList[] | null
-  is_loading: boolean
-  is_error: boolean
-  is_open: boolean
-}
-
-const REDUCER_ACTIONS = {
-  START_LOADING: 'start/loading',
-  UPDATE_LOCATION: 'update/location',
-  RESET_LOCATION: 'reset/location',
-  UPDATE_ERROR: 'update/error',
-  TOGGLE_DROPDOWN: 'toggle/dropdown',
-}
-
-function reducer(
-  state: ReducerStateType,
-  action: { type: string; payload?: LocationList[] }
-): ReducerStateType {
-  switch (action.type) {
-    case REDUCER_ACTIONS.START_LOADING:
-      return {
-        locations: null,
-        is_loading: true,
-        is_error: false,
-        is_open: false,
-      }
-
-    case REDUCER_ACTIONS.UPDATE_ERROR:
-      return {
-        locations: null,
-        is_loading: false,
-        is_error: !state.is_error,
-        is_open: false,
-      }
-
-    case REDUCER_ACTIONS.UPDATE_LOCATION:
-      return {
-        locations: action.payload || state.locations,
-        is_loading: false,
-        is_error: false,
-        is_open: true,
-      }
-    case REDUCER_ACTIONS.RESET_LOCATION:
-      return {
-        locations: null,
-        is_loading: false,
-        is_error: false,
-        is_open: false,
-      }
-
-    case REDUCER_ACTIONS.TOGGLE_DROPDOWN:
-      return {
-        ...state,
-        is_open: !state.is_open,
-      }
-
-    default:
-      return state
-  }
+type RequestWeatherOfPlaceProps = {
+  lat: number
+  log: number
+  location_name: string
 }
 
 export function SearchCityForm() {
   const formRef = useRef<HTMLFormElement | null>(null)
   const { updateCoordinateLocation } = useContext(CoordinateLocationContext)
-  const [state, dispatch] = useReducer(reducer, {
+  const [state, dispatch] = useReducer(searchCityReducer, {
     locations: null,
     is_loading: false,
     is_error: false,
@@ -90,7 +33,7 @@ export function SearchCityForm() {
   })
 
   async function requestFindCityLocation(event: FormEvent) {
-    dispatch({ type: REDUCER_ACTIONS.START_LOADING })
+    dispatch({ type: SEARCH_CITY_REDUCER_ACTIONS.START_LOADING })
     event.preventDefault()
     if (!formRef.current) return
 
@@ -101,9 +44,9 @@ export function SearchCityForm() {
 
     const results = await getGeolocation(search)
     if (!results) {
-      dispatch({ type: REDUCER_ACTIONS.UPDATE_ERROR })
+      dispatch({ type: SEARCH_CITY_REDUCER_ACTIONS.UPDATE_ERROR })
       setTimeout(() => {
-        dispatch({ type: REDUCER_ACTIONS.UPDATE_ERROR })
+        dispatch({ type: SEARCH_CITY_REDUCER_ACTIONS.UPDATE_ERROR })
       }, 5000)
       return
     }
@@ -124,33 +67,26 @@ export function SearchCityForm() {
         ...result,
         flags: {
           alt: 'not-found',
-          png: 'https://placehold.co/32x16?text=Not+Found',
-          svg: 'https://placehold.co/32x16?text=Not+Found',
+          png: 'https://placehold.co/32x21/png?text=?',
+          svg: 'https://placehold.co/32x21/svg?text=?',
         },
       })
     }
 
     dispatch({
-      type: REDUCER_ACTIONS.UPDATE_LOCATION,
+      type: SEARCH_CITY_REDUCER_ACTIONS.UPDATE_LOCATION,
       payload: locations,
     })
   }
 
-  function requestWeatherOfPlace({
-    lat,
-    log,
-    location_name,
-  }: {
-    lat: number
-    log: number
-    location_name: string
-  }) {
-    dispatch({ type: REDUCER_ACTIONS.TOGGLE_DROPDOWN })
+  function requestWeatherOfPlace(props: RequestWeatherOfPlaceProps) {
+    const { lat, log, location_name } = props
+    dispatch({ type: SEARCH_CITY_REDUCER_ACTIONS.TOGGLE_DROPDOWN })
     updateCoordinateLocation({ lat, log, location_name })
   }
 
   function toggleLocationDropdown() {
-    dispatch({ type: REDUCER_ACTIONS.TOGGLE_DROPDOWN })
+    dispatch({ type: SEARCH_CITY_REDUCER_ACTIONS.TOGGLE_DROPDOWN })
   }
 
   return (
@@ -204,38 +140,36 @@ export function SearchCityForm() {
         aria-label='search list'
         className='absolute top-20 rounded-md left-0 z-50 bg-[#262840] p-2 w-full opacity-0 transition-all duration-300 -translate-y-5 overflow-hidden data-[dropdown=false]:-z-10 data-[dropdown=true]:opacity-100 data-[dropdown=true]:translate-y-0'
       >
-        {state.locations &&
-          state.locations.map((location) => {
-            return (
-              <li
-                key={location.id}
-                onClick={() =>
-                  requestWeatherOfPlace({
-                    lat: location.latitude,
-                    log: location.longitude,
-                    location_name: `${location.country}/${location.name}`,
-                  })
-                }
-                className='relative w-full flex items-center gap-2 text-sm p-3 px-2 cursor-pointer rounded-md overflow-hidden last-of-type:after:border-b-0 after:absolute after:bottom-0 after:border-neutral-500 after:border-b after:w-full hover:bg-[#2F2F49]'
-              >
-                <Image
-                  src={location.flags.png}
-                  alt={location.flags.alt}
-                  width={32}
-                  height={16}
-                />
-                <span className='w-full truncate'>
-                  {location.country || 'unknown'} -{' '}
-                  {location.admin1 || 'unknown'} - {location.name || 'unknown'}
-                </span>
-              </li>
-            )
-          })}
+        {state.locations?.map((location) => {
+          return (
+            <li
+              key={location.id}
+              onClick={() =>
+                requestWeatherOfPlace({
+                  lat: location.latitude,
+                  log: location.longitude,
+                  location_name: `${location.country}/${location.name}`,
+                })
+              }
+              className='relative w-full flex items-center gap-2 text-sm p-3 px-2 cursor-pointer rounded-md overflow-hidden last-of-type:after:border-b-0 after:absolute after:bottom-0 after:border-neutral-500 after:border-b after:w-full hover:bg-[#2F2F49]'
+            >
+              <Image
+                src={location.flags.png}
+                alt={location.flags.alt}
+                width={32}
+                height={16}
+              />
+              <span className='w-full truncate'>
+                {location.country || 'unknown'} - {location.admin1 || 'unknown'}{' '}
+                - {location.name || 'unknown'}
+              </span>
+            </li>
+          )
+        })}
       </ul>
 
       <div
         data-error={state.is_error}
-        aria-label='not found search list'
         className='absolute top-20 rounded-md left-0 z-20 bg-[#262840] p-2 w-full opacity-0 transition-all duration-300 -translate-y-5 overflow-hidden data-[error=false]:-z-10 data-[error=true]:opacity-100 data-[error=true]:translate-y-0'
       >
         <div className='relative w-full flex items-center gap-2 text-sm p-3 px-2 rounded-md overflow-hidden'>
@@ -246,7 +180,6 @@ export function SearchCityForm() {
 
       <div
         data-loading={state.is_loading}
-        aria-label='loading search list'
         className='absolute top-20 rounded-md left-0 z-20 bg-[#262840] p-2 w-full opacity-0 transition-all duration-300 -translate-y-5 overflow-hidden data-[loading=false]:-z-10 data-[loading=true]:opacity-100 data-[loading=true]:translate-y-0'
       >
         <div className='relative w-full flex items-center gap-2 text-sm p-3 px-2 rounded-md overflow-hidden'>
