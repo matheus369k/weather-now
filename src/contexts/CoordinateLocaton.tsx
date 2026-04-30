@@ -1,8 +1,13 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: don't necessary */
 'use client'
 
+import { createContext, type ReactNode, useEffect, useReducer } from 'react'
+import {
+  COORDINATE_LOCATION_REDUCER_ACTIONS,
+  coordinateLocationReducer,
+} from '@/reducers/coordinate-location/reducer'
 import { getCurrentLocation } from '@/services/get-current-location'
-import { createContext, useEffect, useReducer, type ReactNode } from 'react'
+import { getUserCoordinate } from '@/util/get-user-coordinates'
 
 type CoordinateType = {
   location_name: string
@@ -16,41 +21,6 @@ interface CoordinateLocationContextType {
   updateCoordinateLocation: (props: CoordinateType) => void
 }
 
-type ReducerStateLocationType = {
-  location_name: string
-  lat: number
-  log: number
-}
-
-const REDUCER_ACTIONS = {
-  UPDATE_LOCATION: 'update/location',
-  RESET_LOCATION: 'reset/location',
-}
-
-function reducer(
-  state: ReducerStateLocationType,
-  action: { payload?: ReducerStateLocationType; type: string },
-): ReducerStateLocationType {
-  switch (action.type) {
-    case REDUCER_ACTIONS.UPDATE_LOCATION:
-      return {
-        ...state,
-        ...action.payload,
-      }
-
-    case REDUCER_ACTIONS.RESET_LOCATION:
-      return {
-        ...state,
-        location_name: 'Berlin/Germany',
-        lat: 52.52,
-        log: 13.41,
-      }
-
-    default:
-      return state
-  }
-}
-
 export const CoordinateLocationContext = createContext(
   {} as CoordinateLocationContextType,
 )
@@ -60,63 +30,49 @@ export function CoordinateLocationProvider({
 }: {
   children: ReactNode
 }) {
-  const [state, dispatch] = useReducer(reducer, {
+  const [state, dispatch] = useReducer(coordinateLocationReducer, {
     location_name: 'Berlin/Germany',
     lat: 52.52,
     log: 13.41,
   })
 
   useEffect(() => {
-    loadUserCurrentLocation()
+    restoreOldUserCurrentLocation()
   }, [])
 
-  async function loadUserCurrentLocation() {
+  async function restoreOldUserCurrentLocation() {
     if (!globalThis.window) return
 
-    const navigator = window.navigator
-    const userCoordinate = {} as Omit<CoordinateType, 'location_name'>
+    const userCoordinate = await getUserCoordinate()
+    if (!userCoordinate) return
 
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(({ coords }) => {
-        userCoordinate.lat = coords.latitude
-        userCoordinate.lat = coords.longitude
-      })
+    const result = await getCurrentLocation({ ...userCoordinate })
+    if (!result) return
 
-      try {
-        const result = await getCurrentLocation({ ...userCoordinate })
-
-        if (!result) {
-          throw new Error('Not found your location')
-        }
-
-        dispatch({
-          type: REDUCER_ACTIONS.UPDATE_LOCATION,
-          payload: {
-            location_name: result.location_name,
-            lat: result.lat,
-            log: result.log,
-          },
-        })
-      } catch (error) {
-        console.error((error as Error).message)
-      }
-    }
+    dispatch({
+      type: COORDINATE_LOCATION_REDUCER_ACTIONS.UPDATE_LOCATION,
+      payload: {
+        location_name: result.location_name,
+        lat: result.lat,
+        log: result.log,
+      },
+    })
   }
 
   function updateCoordinateLocation(props: CoordinateType) {
     const { lat, log, location_name } = props
     dispatch({
-      type: REDUCER_ACTIONS.UPDATE_LOCATION,
+      type: COORDINATE_LOCATION_REDUCER_ACTIONS.UPDATE_LOCATION,
       payload: {
+        location_name,
         lat,
         log,
-        location_name,
       },
     })
   }
 
   function resetCoordinateLocation() {
-    dispatch({ type: REDUCER_ACTIONS.RESET_LOCATION })
+    dispatch({ type: COORDINATE_LOCATION_REDUCER_ACTIONS.RESET_LOCATION })
   }
 
   return (
