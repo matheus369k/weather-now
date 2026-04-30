@@ -6,7 +6,7 @@ import Link from 'next/link'
 export function Header() {
   return (
     <header className='flex justify-between max-w-[1444px] mx-auto py-8 px-4'>
-      <Link href={'/'}>
+      <Link href='#'>
         <Image
           src={logo}
           alt='Showing of sunflower and write of front weather now'
