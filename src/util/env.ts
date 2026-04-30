@@ -11,6 +11,7 @@ const envSchema = z.object({
   NEXT_PUBLIC_COUNTRY_FLAGS_API_URL: z.string().url(),
   NEXT_PUBLIC_CURRENT_LOCATION_API_URL: z.string().url(),
   NEXT_PUBLIC_GA_ID: z.string().regex(googleAnalystRegex).optional(),
+  NEXT_PUBLIC_WEBSITE_URL: z.string().default('http://localhost:3000/'),
 })
 
 export const env = envSchema.parse(process.env)
